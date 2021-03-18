@@ -23,39 +23,19 @@ export default new Router({
             meta: { title: '自述文件' },
             children: [
                 {
-                    path: '/homepage',
-                    component: () => import('../views/homePage.vue'),
-                    meta: { title: '首页' }
-                },
-                {
                     path: '/processingOrdersSum',
                     component: () => import('../views/processingOrders/processingOrdersSum.vue'),
-                    meta: { title: '执行中订单汇总' }
+                    meta: { title: '未执行订单汇总' }
                 },
                 {
                     path: '/processingOrdersDetail',
                     component: () => import('../views/processingOrders/processingOrdersDetail.vue'),
-                    meta: { title: '订单详情' }
-                },
-                {
-                    path: '/goodVideo',
-                    component: () => import('../views/processingOrders/goodVideo.vue'),
-                    meta: { title: '订单监控详情' }
-                },
-                {
-                    path: '/errorOrdersSum',
-                    component: () => import('../views/errorOrders/errorOrdersSum.vue'),
-                    meta: { title: '异常订单汇总' }
-                },
-                {
-                    path: '/errorOrdersDetail',
-                    component: () => import('../views/errorOrders/errorOrdersDetail.vue'),
-                    meta: { title: '异常订单详情' }
+                    meta: { title: '未执行订单详情' }
                 },
                 {
                     path: '/processedOrdersSum',
                     component: () => import('../views/processedOrders/processedOrdersSum.vue'),
-                    meta: { title: '历史订单汇总' }
+                    meta: { title: '“我的”历史订单汇总' }
                 },
                 {
                     path: '/processedOrdersDetail',

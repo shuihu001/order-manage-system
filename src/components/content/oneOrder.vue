@@ -11,9 +11,6 @@
         <tr height="20px" align="center">
 				<td>运单号{{ this.oneOrder.orderNum }}</td>
 				<td>
-                    <span v-if="oneOrder.abnormal==1" class="abnormal">温度异常</span>
-                    <span v-if="oneOrder.abnormal==2" class="abnormal">湿度异常</span>
-                    <span v-if="oneOrder.abnormal==3" class="abnormal">开门异常</span>
                     <span v-if="oneOrder.finished" class="finished">已完成</span>
                 </td>
 				<td>创建时间{{ this.oneOrder.creatTime }}</td>
@@ -28,7 +25,7 @@
 				<td>{{ this.oneOrder.startPlace }}</td>
 				<td><img src="../../assets/img/rightArrow.svg" class="rightArrow"></td>
                 <td>{{ this.oneOrder.endPlace }}</td>
-				<td></td>
+				<td><img src="../../assets/img/delet.svg" class="delet" @click="delet" v-if="oneOrder.finished == false"></td>
 			</tr>
 			<tr height="20px" align="center">
 				<td>{{ this.oneOrder.licenseNum }}</td>
@@ -74,6 +71,9 @@
             // this.$router.push('/goodVIdeo')
 
             this.$parent.detailSearch()
+        },
+        delet() {
+            this.$emit("delet");
         }
     },
     //生命周期 - 创建完成（可以访问当前this实例）
@@ -109,6 +109,12 @@
 .rightArrow {
     width: 120px;
     height: 40px;
+}
+
+.delet {
+    width: 40px;
+    height: 28px;
+    cursor: pointer;
 }
 
 .abnormal {

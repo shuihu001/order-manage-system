@@ -48,7 +48,7 @@ export default {
     },
     methods: {
         detailSearch() {
-            this.$router.push('/processedOrdersDetail')
+            this.$router.push('/processedOrdersDetail');
         },
         // 获取 easy-mock 的模拟数据
         getData() {

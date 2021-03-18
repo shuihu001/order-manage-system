@@ -12,7 +12,12 @@
                 <el-input v-model="query.name" placeholder="请输入始发地或目的地或运单号进行查询" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
             </div>
-            <one-order  v-for="oneOrder in tableData" :one-order="oneOrder" :key="oneOrder.orderNum"></one-order>
+            <one-order
+                v-for="(oneOrder,index) in tableData"
+                :one-order="oneOrder"
+                :key="oneOrder.orderNum"
+                @delet = delet(index)>
+            </one-order>
 
             <!-- 分页 -->
             <!-- <div class="pagination">
@@ -61,8 +66,9 @@ export default {
     methods: {
         detailSearch() {
             // 需要添加判断逻辑，觉得跳转页面的路径
-            // this.$router.push('/processingOrdersDetail')
-            this.$router.push('/goodVIdeo')
+            
+            this.$router.push('/processingOrdersDetail')
+            // this.$router.push('/goodVIdeo')
         },
         // 获取 easy-mock 的模拟数据
         getData() {
@@ -71,6 +77,9 @@ export default {
                 this.tableData = res.list;
                 this.pageTotal = res.pageTotal || 50;
             });
+        },
+        delet(index) {
+            this.tableData.splice(index, 1);
         },
         // 触发搜索按钮
         handleSearch() {
