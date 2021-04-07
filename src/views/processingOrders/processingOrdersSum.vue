@@ -3,7 +3,7 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item>
-                    <i class="el-icon-lx-cascades"></i> 执行中的订单
+                    <i class="el-icon-lx-cascades"></i> 未执行的订单
                 </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
@@ -13,10 +13,11 @@
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
             </div>
             <one-order
-                v-for="(oneOrder,index) in tableData"
+                v-for="(oneOrder,index) in sumData"
                 :one-order="oneOrder"
-                :key="oneOrder.orderNum"
-                @delet = delet(index)>
+                :key="oneOrder.id"
+                @detailSearch = detailSearch(oneOrder)
+            >
             </one-order>
 
             <!-- 分页 -->
@@ -36,18 +37,21 @@
 
 <script>
 import oneOrder from '../../components/content/oneOrder'
-
 import { fetchData } from '../../api/index';
+import { driverData } from '../../api/index';
 export default {
     name: 'basetable',
     data() {
         return {
             query: {
-                orderNum:'',
+                id:'',
                 pageIndex: 1,
                 pageSize: 1
             },
             tableData: [],
+            carData: [],
+            sumData: [],
+            newitem: {},
             multipleSelection: [],
             delList: [],
             editVisible: false,
@@ -64,19 +68,51 @@ export default {
         this.getData();
     },
     methods: {
-        detailSearch() {
-            // 需要添加判断逻辑，觉得跳转页面的路径
-            
-            this.$router.push('/processingOrdersDetail')
-            // this.$router.push('/goodVIdeo')
-        },
+      detailSearch(oneOrder) {
+        // console.log(id)
+          // 需要添加判断逻辑，觉得跳转页面的路径
+          // this.$router.push('/processingOrdersDetail/' +oneOrder)
+          this.$router.push({
+              path:'/processingOrdersDetail',
+              query: {
+                oneOrder :oneOrder
+              }})
+      },
         // 获取 easy-mock 的模拟数据
         getData() {
-            fetchData(this.query).then(res => {
-                console.log(res);
-                this.tableData = res.list;
+            fetchData(0).then(res => {
+                this.tableData = res.data;
                 this.pageTotal = res.pageTotal || 50;
+                console.log(res);
+                driverData().then(res => {
+                  this.carData = res.data;
+                  console.log(this.carData);
+                  // 数组里对象有id相同，合并两数组对象
+                  this.sumData = this.tableData.map(item => {
+                    item.newParam = 'phoneNum';
+                    item.newParam = 'driverName';
+                    // find方法，如果符合条件，返回符合条件那一项
+                      let ch = this.carData.find(driverItem => {
+                        // 注意根据数据类型选择是否全等于
+                        return driverItem.driverId === item.driverId;
+                      })
+                    console.log(ch);
+                    if (ch!== undefined){
+                      item.phoneNum = ch.phoneNumber;
+                      item.driverName = ch.name;
+                      item.carId = ch.driverYear;
+                    }else {
+                      item.phoneNum = "未找到司机信息";
+                      item.driverName = "未找到司机信息";
+                      item.carId = "未找到司机信息";
+                    }
+                    console.log(item);
+                    return { ...item}
+                  });
+                  console.log(this.sumData);
+                });
             });
+
         },
         delet(index) {
             this.tableData.splice(index, 1);
