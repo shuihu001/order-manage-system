@@ -43,6 +43,7 @@ export default {
     data() {
         return {
             query: {
+                name: '',
                 orderNum:'',
                 pageIndex: 1,
                 pageSize: 1
@@ -61,6 +62,9 @@ export default {
         'one-order': oneOrder
     },
     created() {
+        this.$bus.$on('aaa', () => {
+            console.log('aaa')
+        })
         this.getData();
     },
     methods: {
@@ -72,10 +76,11 @@ export default {
         },
         // 获取 easy-mock 的模拟数据
         getData() {
-            fetchData(this.query).then(res => {
-                console.log(res);
+            fetchData().then(res => {
                 this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
+                if (this.query.name !== ''){
+                this.tableData = this.tableData.filter(item => item.orderNum.match(this.query.name) || item.startPlace.match(this.query.name) || item.endPlace.match(this.query.name));
+                }
             });
         },
         delet(index) {
@@ -83,7 +88,6 @@ export default {
         },
         // 触发搜索按钮
         handleSearch() {
-            this.$set(this.query, 'pageIndex', 1);
             this.getData();
         },
         // 删除操作
