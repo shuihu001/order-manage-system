@@ -9,11 +9,11 @@
 			<col width="120px">
 
         <tr height="20px" align="center">
-				<td>运单号{{ this.oneOrder.orderNum }}</td>
+				<td>运单号{{ this.oneOrder.id }}</td>
 				<td>
                     <span v-if="oneOrder.finished" class="finished">已完成</span>
                 </td>
-				<td>创建时间{{ this.oneOrder.creatTime }}</td>
+				<td>创建时间 <br/> {{ this.oneOrder.createTime.toString().slice(0,10)+ " "+this.oneOrder.createTime.toString().slice(11,16) }}</td>
 				<td></td>
 				<td rowspan="3">
                     <!-- <button class="detailBtn">查看详情</button> -->
@@ -22,13 +22,13 @@
 			</tr>
 			 
 			<tr height="30px" align="center" class="place">
-				<td>{{ this.oneOrder.startPlace }}</td>
+				<td>{{ this.oneOrder.starting }}</td>
 				<td><img src="../../assets/img/rightArrow.svg" class="rightArrow"></td>
-                <td>{{ this.oneOrder.endPlace }}</td>
+                <td>{{ this.oneOrder.destination }}</td>
 				<td><img src="../../assets/img/delet.svg" class="delet" @click="delet" v-if="oneOrder.finished == false"></td>
 			</tr>
 			<tr height="20px" align="center">
-				<td>{{ this.oneOrder.licenseNum }}</td>
+				<td>{{ this.oneOrder.carId }}</td>
                 <td>{{ this.oneOrder.driverName }}</td>
 				<td>{{ this.oneOrder.phoneNum }}</td>
 				<td></td>
@@ -48,7 +48,7 @@
       oneOrder: {
         type: Object,
         default: function() {
-            return {orderNum:'xx123545',creatTime:'2020.12.12',startPlace:'江西上饶',endPlace:'北京邮电大学',licenseNum:'赣12345',driverName:'张三',phoneNum:13051578190}
+            return {id:'xx123545',creatTime:'2020.12.12',starting:'江西上饶',destination:'北京邮电大学',carId:'赣12345',driverName:'张三',phoneNum:13051578190}
         }
       },
     },
@@ -69,8 +69,7 @@
             // 需要添加判断逻辑，觉得跳转页面的路径
             // this.$router.push('/processingOrdersDetail')
             // this.$router.push('/goodVIdeo')
-
-            this.$parent.detailSearch()
+            this.$emit("detailSearch");
         },
         delet() {
             this.$emit("delet");

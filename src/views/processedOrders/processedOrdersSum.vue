@@ -2,9 +2,7 @@
     <div>
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item>
-                    <i class="el-icon-lx-cascades"></i> 历史订单
-                </el-breadcrumb-item>
+                <el-breadcrumb-item> <i class="el-icon-lx-cascades"></i> 历史订单 </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
@@ -12,21 +10,41 @@
                 <el-input v-model="query.name" placeholder="请输入始发地或目的地或运单号进行查询" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
             </div>
-            <one-order  v-for="oneOrder in tableData" :one-order="oneOrder" :key="oneOrder.orderNum"></one-order>
+            <one-order
+                v-for="(oneOrder, index) in tableData"
+                :one-order="oneOrder"
+                :key="oneOrder.id"
+                @delet="delet(index)"
+                @detailSearch="detailSearch(oneOrder)"
+            >
+            </one-order>
+
+            <!-- 分页 -->
+            <!-- <div class="pagination">
+          <el-pagination
+              background
+              layout="total, prev, pager, next"
+              :current-page="query.pageIndex"
+              :page-size="query.pageSize"
+              :total="pageTotal"
+              @current-change="handlePageChange"
+          ></el-pagination>
+      </div> -->
         </div>
     </div>
 </template>
 
 <script>
-import oneOrder from '../../components/content/oneOrder'
+import oneOrder from '../../components/content/oneOrder';
 
-import { fetchData } from '../../api/index';
+import { driverData, fetchData, fetchDatahis } from '../../api/index';
 export default {
     name: 'basetable',
     data() {
         return {
             query: {
-                orderNum:'',
+                name: '',
+                id: '',
                 pageIndex: 1,
                 pageSize: 1
             },
@@ -47,21 +65,60 @@ export default {
         this.getData();
     },
     methods: {
-        detailSearch() {
-            this.$router.push('/processedOrdersDetail');
-        },
-        // 获取 easy-mock 的模拟数据
-        getData() {
-            fetchData(this.query).then(res => {
-                this.tableData = res.list;
-                if (this.query.name !== ''){
-                this.tableData = this.tableData.filter(item => item.orderNum.match(this.query.name) || item.startPlace.match(this.query.name) || item.endPlace.match(this.query.name));
+        detailSearch(oneOrder) {
+            // console.log(id)
+            // 需要添加判断逻辑，觉得跳转页面的路径
+            // this.$router.push('/processingOrdersDetail/' +oneOrder)
+            this.$router.push({
+                path: '/processedOrdersDetail',
+                query: {
+                    oneOrderhis: oneOrder
                 }
             });
         },
+        // 获取 easy-mock 的模拟数据
+        getData() {
+            fetchData(1).then(async (res) => {
+                this.tableData = await res.data;
+                if (this.query.name !== '') {
+                    this.tableData = this.tableData.filter(
+                        (item) =>
+                            item.id.toString().match(this.query.name) ||
+                            item.starting.toString().match(this.query.name) ||
+                            item.destination.toString().match(this.query.name)
+                    );
+                    console.log(this.tableData);
+                }
+                driverData().then(async (res) => {
+                    this.carData = await res.data;
+                    // 数组里对象有id相同，合并两数组对象
+                    this.sumData = this.tableData.map((item) => {
+                        item.newParam = 'phoneNum';
+                        item.newParam = 'driverName';
+                        // find方法，如果符合条件，返回符合条件那一项
+                        let ch = this.carData.find((driverItem) => {
+                            // 注意根据数据类型选择是否全等于
+                            return driverItem.driverId === item.driverId;
+                        });
+                        if (ch !== undefined) {
+                            item.phoneNum = ch.phoneNumber;
+                            item.driverName = ch.name;
+                            item.carId = ch.driverYear;
+                        } else {
+                            item.phoneNum = '未找到司机信息';
+                            item.driverName = '未找到司机信息';
+                            item.carId = '未找到司机信息';
+                        }
+                        return { ...item };
+                    });
+                });
+            });
+        },
+        delet(index) {
+            this.tableData.splice(index, 1);
+        },
         // 触发搜索按钮
         handleSearch() {
-            this.$set(this.query, 'pageIndex', 1);
             this.getData();
         },
         // 删除操作
