@@ -28,13 +28,29 @@
             <el-input v-model="form.destination" placeholder="请填目的地地址，例如：北京市-海淀区-裕民中路6号-北京市农业局"></el-input>
           </el-form-item>
           <el-form-item label="司机姓名">
-            <el-input v-model="form.driverName" placeholder="请填写司机姓名，例如：张三"></el-input>
+<!--            <el-select-->
+<!--              v-model="value"-->
+<!--              multiple-->
+<!--              filterable-->
+<!--              remote-->
+<!--              reserve-keyword-->
+<!--              placeholder="请填写司机姓名，例如：张三"-->
+<!--              :remote-method="remoteMethod"-->
+<!--              :loading="loading">-->
+<!--              <el-option-->
+<!--                v-for="item in options"-->
+<!--                :key="item.value"-->
+<!--                :label="item.label"-->
+<!--                :value="item.value">-->
+<!--              </el-option>-->
+<!--            </el-select>-->
+            <el-input v-model="form.driverName" placeholder="请填写司机姓名，例如：张三" :readonly="true"></el-input>
           </el-form-item>
           <el-form-item label="车牌号">
-            <el-input v-model="form.carId" placeholder="请填写车牌号，例如：京A123456"></el-input>
+            <el-input v-model="form.carId" placeholder="请填写车牌号，例如：京A123456" :readonly="true"></el-input>
           </el-form-item>
           <el-form-item label="手机号">
-            <el-input v-model="form.phoneNum" placeholder="请填写司机手机号，例如：13812341234"></el-input>
+            <el-input v-model="form.phoneNum" placeholder="请填写司机手机号，例如：13812341234" :readonly="true"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">表单提交</el-button>
@@ -47,12 +63,32 @@
 </template>
 
 <script>
-import { sendData } from '../../api/index';
-import { changeOrderState } from '../../api/index';
+import { sendData,changeOrderState,sendVideo} from '../../api/index';
 export default {
   name: 'baseform',
   data() {
     return {
+      // options: [],
+      // value: [],
+      // list: [],
+      // loading: false,
+      // states: ["Alabama", "Alaska", "Arizona",
+      //   "Arkansas", "California", "Colorado",
+      //   "Connecticut", "Delaware", "Florida",
+      //   "Georgia", "Hawaii", "Idaho", "Illinois",
+      //   "Indiana", "Iowa", "Kansas", "Kentucky",
+      //   "Louisiana", "Maine", "Maryland",
+      //   "Massachusetts", "Michigan", "Minnesota",
+      //   "Mississippi", "Missouri", "Montana",
+      //   "Nebraska", "Nevada", "New Hampshire",
+      //   "New Jersey", "New Mexico", "New York",
+      //   "North Carolina", "North Dakota", "Ohio",
+      //   "Oklahoma", "Oregon", "Pennsylvania",
+      //   "Rhode Island", "South Carolina",
+      //   "South Dakota", "Tennessee", "Texas",
+      //   "Utah", "Vermont", "Virginia",
+      //   "Washington", "West Virginia", "Wisconsin",
+      //   "Wyoming"],
       option: [{
         value: 1,
         label: '设备1'
@@ -121,10 +157,29 @@ export default {
 
   created () {
     this.form = this.$route.query.oneOrder;
-
+  },
+  mounted() {
+    this.list = this.states.map(item => {
+      return { value: `value:${item}`, label: `label:${item}` };
+    });
   },
 
   methods: {
+    // remoteMethod(query1) {
+    //   if (query1 !== '') {
+    //     this.loading = true;
+    //     setTimeout(() => {
+    //       this.loading = false;
+    //       this.options = this.list.filter(item => {
+    //         return item.label.toLowerCase()
+    //           .indexOf(query1.toLowerCase()) > -1;
+    //       });
+    //     }, 200);
+    //   } else {
+    //     this.options = [];
+    //   }
+    // },
+
     goBack(){
       this.$router.push({path:'/processingOrdersSum',})
     },
